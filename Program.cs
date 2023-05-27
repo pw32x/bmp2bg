@@ -374,7 +374,7 @@ namespace bmp2background
             }
             else
             {
-                throw new ReturnCodeException("bmp2gb.exe <source .bmp> <destination folder>", ReturnCode_NoParameters);
+                throw new ReturnCodeException("bmp2gb.exe <source .bmp> <optional destination folder>", ReturnCode_NoParameters);
             }
 
             return (sourceFilename, destinationFolder);
