@@ -4,4 +4,4 @@
  Currently very barebones. Doesn't check for flipped tiles.
 
 # commandline
-bmp2gb.exe <source .bmp> <optional destination folder>
+bmp2gb.exe [source .bmp] [optional destination folder]
