@@ -163,28 +163,52 @@ namespace bmp2background
             return (optimizedTileset, tileMap);
         }
 
-        private static Bitmap CreateCombinedBitmap(List<Bitmap> tileset)
+        public static Bitmap CreateCombinedBitmap(List<Bitmap> tileset)
         {
             if (tileset.Count == 0)
                 return null;
 
             Bitmap firstTile = tileset.First();
 
-            // Create a bitmap that's a long column of tiles
-            Bitmap combinedBitmap = new Bitmap(firstTile.Width, firstTile.Height * tileset.Count);
+            int width = firstTile.Width;
+            int height = firstTile.Height;
+            int combinedHeight = height * tileset.Count;
 
-            // Create a Graphics object from the combined bitmap
-            using (Graphics g = Graphics.FromImage(combinedBitmap))
+            Bitmap combinedBitmap = new Bitmap(width, combinedHeight, PixelFormat.Format4bppIndexed);
+            combinedBitmap.Palette = firstTile.Palette;
+
+            // Combine bitmaps
+            Rectangle rect = new Rectangle(0, 0, width, height);
+
+            Rectangle combinedBitmapRect = new Rectangle(0, 0, width, combinedHeight);
+            BitmapData combinedData = combinedBitmap.LockBits(combinedBitmapRect, ImageLockMode.WriteOnly, PixelFormat.Format4bppIndexed);
+
+            int rowIndex = 0;
+
+            foreach (Bitmap bitmap in tileset)
             {
-                int counter = 0;
+                BitmapData bitmapData = bitmap.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format4bppIndexed);
 
-                foreach (var tile in tileset)
+                unsafe
                 {
-                    // Draw the first bitmap onto the combined bitmap at position (0, 0)
-                    g.DrawImage(tile, 0, counter * tile.Height);
-                    counter++;
+                    byte* combinedPtr = (byte*)combinedData.Scan0 + rowIndex * combinedData.Stride;
+                    byte* bitmapPtr = (byte*)bitmapData.Scan0;
+
+                    for (int y = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width / 2; x++)
+                        {
+                            byte combinedByte = bitmapPtr[y * bitmapData.Stride + x];
+                            combinedPtr[y * combinedData.Stride + x] = combinedByte;
+                        }
+                    }
                 }
+
+                bitmap.UnlockBits(bitmapData);
+                rowIndex += height;
             }
+
+            combinedBitmap.UnlockBits(combinedData);
 
             return combinedBitmap;
         }
@@ -466,7 +490,7 @@ namespace bmp2background
                 Console.WriteLine(exception.Message);
             }
 
-            int returnCode = 0;
+            int returnCode = int.MinValue;
 
             if (e.ExceptionObject is ReturnCodeException returnCodeException)
             {
