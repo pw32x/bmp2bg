@@ -406,6 +406,8 @@ namespace bmp2background
 
         static int Main(string[] args)
         {
+            Console.WriteLine("bmp2bg by pw32x. https://github.com/pw32x/bmp2bg");
+
             // Set global exception handler
             AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
 
