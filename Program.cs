@@ -89,7 +89,9 @@ namespace bmp2background
             header.AppendLine($"#ifndef {actualTilemapName.ToUpper()}_INCLUDE_H");
             header.AppendLine($"#define {actualTilemapName.ToUpper()}_INCLUDE_H");
             header.AppendLine();
-            header.AppendLine($"extern const unsigned short {actualTilemapName}[{tilemapWidth * tilemapHeight}];");
+            header.AppendLine("#include <stdint.h>");
+            header.AppendLine();
+            header.AppendLine($"extern const uint16_t {actualTilemapName}[{tilemapWidth * tilemapHeight}];");
             header.AppendLine();
             header.AppendLine($"#endif // {actualTilemapName.ToUpper()}_INCLUDE_H");
             File.WriteAllText(destinationFolder + tilemapName + ".h", header.ToString());
@@ -101,7 +103,7 @@ namespace bmp2background
             source.AppendLine();
 
             source.AppendLine($"// tilemap width: {tilemapWidth}, tilemap height {tilemapHeight}");
-            source.AppendLine($"const unsigned short {actualTilemapName}[{tilemapWidth * tilemapHeight}] = ");
+            source.AppendLine($"const uint16_t {actualTilemapName}[{tilemapWidth * tilemapHeight}] = ");
             source.AppendLine("{");
 
             int counter = 0;
@@ -277,7 +279,9 @@ namespace bmp2background
             header.AppendLine($"#ifndef {actualPaletteName.ToUpper()}_INCLUDE_H");
             header.AppendLine($"#define {actualPaletteName.ToUpper()}_INCLUDE_H");
             header.AppendLine();
-            header.AppendLine($"extern const unsigned short {actualPaletteName}[16];");
+            header.AppendLine("#include <stdint.h>");
+            header.AppendLine();
+            header.AppendLine($"extern const uint16_t {actualPaletteName}[16];");
             header.AppendLine();
             header.AppendLine($"#endif // {actualPaletteName.ToUpper()}_INCLUDE_H");
             File.WriteAllText(destinationFolder + paletteName + ".h", header.ToString());
@@ -288,7 +292,7 @@ namespace bmp2background
             source.AppendLine("#include \"" + paletteName + ".h\"");
             source.AppendLine();
             
-            source.AppendLine("const unsigned short " + actualPaletteName + "[16] =");
+            source.AppendLine("const uint16_t " + actualPaletteName + "[16] =");
             source.AppendLine("{");
 
             foreach (var paletteValue in paletteValues)
@@ -310,9 +314,11 @@ namespace bmp2background
             header.AppendLine($"#ifndef {actualTilesetName.ToUpper()}_INCLUDE_H");
             header.AppendLine($"#define {actualTilesetName.ToUpper()}_INCLUDE_H");
             header.AppendLine();
+            header.AppendLine("#include <stdint.h>");
+            header.AppendLine();
 
             int arraySize = (tilesetBitmap.Width * tilesetBitmap.Height / 2);
-            header.Append($"extern const unsigned char {actualTilesetName}[{arraySize}];");
+            header.Append($"extern const uint8_t {actualTilesetName}[{arraySize}];");
             header.AppendLine($" // {arraySize / 32} tiles");
             header.AppendLine();
             header.AppendLine($"#endif // {actualTilesetName.ToUpper()}_INCLUDE_H");
@@ -350,7 +356,7 @@ namespace bmp2background
             int arraySize = (width * height / 2);
 
             sb.AppendLine($" // {arraySize / 32} tiles");
-            sb.AppendLine($"const unsigned char {tilesetName}[" + arraySize + "] = ");
+            sb.AppendLine($"const uint8_t {tilesetName}[" + arraySize + "] = ");
             sb.AppendLine("{");
 
             int tileCounter = 0;
